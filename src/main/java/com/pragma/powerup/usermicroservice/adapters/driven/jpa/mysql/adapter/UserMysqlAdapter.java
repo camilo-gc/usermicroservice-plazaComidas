@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.pragma.powerup.usermicroservice.configuration.Constants.PROVIDER_ROLE_ID;
+import static com.pragma.powerup.usermicroservice.configuration.Constants.CLIENT_ROLE_ID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -26,28 +26,15 @@ public class UserMysqlAdapter implements IUserPersistencePort {
 
     @Override
     public void saveUser(User user) {
-        if (user.getRole().getId().equals(PROVIDER_ROLE_ID))
-        {
-            throw new RoleNotAllowedForCreationException();
-        }
-        if (userRepository.findByIdAndRoleEntityId(user.getId(), user.getRole().getId()).isPresent()) {
+
+        if (userRepository.findByDni(user.getDni()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
 
-        //roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
+        roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(userEntityMapper.toEntity(user));
     }
 
-    @Override
-    public void deleteUser(User user) {
-        if (userRepository.findByIdAndRoleEntityId(user.getId(), user.getRole().getId()).isPresent()) {
-            // TODO: eliminar usuario
-
-        }
-        else {
-            throw new UserNotFoundException();
-        }
-    }
 
 }

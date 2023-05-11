@@ -5,7 +5,7 @@ import com.pragma.powerup.usermicroservice.domain.model.User;
 import java.util.List;
 
 public interface IUserPersistencePort {
+
     void saveUser(User user);
-    void deleteUser(User user);
 
 }

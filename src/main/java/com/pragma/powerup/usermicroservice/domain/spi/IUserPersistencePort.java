@@ -8,4 +8,5 @@ public interface IUserPersistencePort {
 
     void saveUser(User user);
 
+    User getUserById(Long id);
 }

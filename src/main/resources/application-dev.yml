@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost/users
+    url: jdbc:mysql://localhost/users-powerup
     username: root
     password: 1234
   jpa:

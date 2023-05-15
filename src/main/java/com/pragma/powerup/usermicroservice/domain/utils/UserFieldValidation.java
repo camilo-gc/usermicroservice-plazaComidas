@@ -11,19 +11,18 @@ import static com.pragma.powerup.usermicroservice.configuration.Constants.*;
 
 public class UserFieldValidation {
 
-    public static void validate(User user){
+    public static void ownerValidate(User user){
         Map<String, String> fieldValidation = new HashMap<>();
 
         if (!phoneIsValid(user.getPhone())) {
             fieldValidation.put(FIELD_PHONE, FIELD_VALIDATION);
         }
-        /*if (!dniIsValid(user.getDni())) {
+        if (!dniIsValid(user.getDni())) {
             fieldValidation.put(FIELD_DNI, FIELD_VALIDATION);
-        }*/
+        }
         if (!ageIsValid(user.getBirthDate())) {
             fieldValidation.put(FIELD_BIRTHDATE, FIELD_VALIDATION);
         }
-
         if (fieldValidation.size()>0) {
             throw new FieldValidationException(fieldValidation);
         }

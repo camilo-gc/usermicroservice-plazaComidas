@@ -1,8 +1,10 @@
 package com.pragma.powerup.usermicroservice.adapters.driving.http.handlers.impl;
 
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.UserRequestDto;
+import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.UserResponseDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.handlers.IUserHandler;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.mapper.IUserRequestMapper;
+import com.pragma.powerup.usermicroservice.adapters.driving.http.mapper.IUserResponseMapper;
 import com.pragma.powerup.usermicroservice.configuration.Constants;
 import com.pragma.powerup.usermicroservice.domain.api.IUserServicePort;
 import com.pragma.powerup.usermicroservice.domain.model.Role;
@@ -18,6 +20,7 @@ public class UserHandlerImpl implements IUserHandler {
 
     private final IUserServicePort userServicePort;
     private final IUserRequestMapper userRequestMapper;
+    private final IUserResponseMapper userResponseMapper;
 
 
     @Override
@@ -25,6 +28,11 @@ public class UserHandlerImpl implements IUserHandler {
         User user = userRequestMapper.toUser(userRequestDto);
         user.getRole().setId( Constants.OWNER_ROLE_ID );
         userServicePort.saveUser(user);
+    }
+
+    @Override
+    public UserResponseDto getUserById(Long id) {
+        return userResponseMapper.toResponse(userServicePort.getUserById(id));
     }
 
 }

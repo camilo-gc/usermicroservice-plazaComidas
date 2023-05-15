@@ -32,6 +32,7 @@ public class UserRequestDto {
     @NotBlank
     private String password;
 
+    @Digits(integer = 1, fraction = 0)
     private String id_role;
 
 }

@@ -25,7 +25,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-    private List<String> excludedPrefixes = Arrays.asList("/auth/**", "/swagger-ui/**", "/actuator/**", "/person/");
+    private List<String> excludedPrefixes = Arrays.asList("/auth/**", "/swagger-ui/**", "/actuator/**");
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
@@ -33,8 +33,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = getToken(req);
         if (token != null && jwtProvider.validateToken(token)) {
-            String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
+            String userName = jwtProvider.getUserNameFromToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
                     userDetails.getAuthorities());

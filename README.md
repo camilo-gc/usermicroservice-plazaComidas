@@ -36,13 +36,13 @@ To get a local copy up and running follow these steps.
    ```sh
    cd usermicroservice-powerUP-v3
    ```
-3. Create a new database in MySQL called users
+3. Create a new database in MySQL called users-powerup
 4. Update the database connection settings
    ```yml
    # src/main/resources/application-dev.yml
    spring:
       datasource:
-          url: jdbc:mysql://localhost/users
+          url: jdbc:mysql://localhost/users-powerup
           username: root
           password: <your-password>
    ```

@@ -34,10 +34,10 @@ public class JwtProvider {
     private int expiration;
 
     public String generateToken(Authentication authentication) {
-        PrincipalUser usuarioPrincipal = (PrincipalUser) authentication.getPrincipal();
-        List<String> roles = usuarioPrincipal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
+        List<String> roles = principalUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return Jwts.builder()
-                .setSubject(usuarioPrincipal.getUsername())
+                .setSubject(principalUser.getUsername())
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 180))
@@ -45,7 +45,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getNombreUsuarioFromToken(String token) {
+    public String getUserNameFromToken(String token) {
         return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -73,12 +73,12 @@ public class JwtProvider {
         } catch (ExpiredJwtException e) {
             JWT jwt = JWTParser.parse(jwtResponseDto.getToken());
             JWTClaimsSet claims = jwt.getJWTClaimsSet();
-            String nombreUsuario = claims.getSubject();
+            String userName = claims.getSubject();
             List<String> roles = claims.getStringListClaim("roles");
             //List<String> roles = (List<String>) claims.getClaim("roles");
 
             return Jwts.builder()
-                    .setSubject(nombreUsuario)
+                    .setSubject(userName)
                     .claim("roles", roles)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(new Date().getTime() + expiration))

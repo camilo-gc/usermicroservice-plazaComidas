@@ -58,6 +58,8 @@ public class UserRestController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "User returned",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "401", description = "Role not allowed for user creation",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
                     @ApiResponse(responseCode = "404", description = "User not found with the provided id",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

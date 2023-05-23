@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IUserServicePort {
 
-    void saveUser(User user);
+    User saveUser(User user);
 
     User getUserById(Long id);
 }

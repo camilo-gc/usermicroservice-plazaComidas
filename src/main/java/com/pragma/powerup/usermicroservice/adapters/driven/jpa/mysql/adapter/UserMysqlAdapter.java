@@ -23,7 +23,7 @@ public class UserMysqlAdapter implements IUserPersistencePort {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
 
         if (userRepository.findByDni(user.getDni()).isPresent()) {
             throw new UserAlreadyExistsException();
@@ -31,7 +31,8 @@ public class UserMysqlAdapter implements IUserPersistencePort {
 
         roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(userEntityMapper.toEntity(user));
+
+        return userEntityMapper.toUser(userRepository.save(userEntityMapper.toEntity(user)));
     }
 
     @Override

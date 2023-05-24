@@ -9,17 +9,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PrincipalUser implements UserDetails {
+
+    private Long id;
     private String name;
+    private String dni;
     private String userName;
-    private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public PrincipalUser(String name, String userName, String email, String password,
+    public PrincipalUser(Long id, String name, String dni, String userName, String password,
                          Collection<? extends GrantedAuthority> authorities) {
+        this.id=id;
         this.name = name;
+        this.dni = dni;
         this.userName = userName;
-        this.email = email;
         this.password = password;
         this.authorities = authorities;
     }
@@ -27,7 +30,7 @@ public class PrincipalUser implements UserDetails {
     public static PrincipalUser build(UserEntity user, List<RoleEntity> roles) {
         List<GrantedAuthority> authorities = roles.stream()
                 .map(rol -> new SimpleGrantedAuthority(rol.getName())).collect(Collectors.toList());
-        return new PrincipalUser(user.getName(), user.getDni(), user.getEmail(),
+        return new PrincipalUser(user.getId(), user.getName(), user.getDni(), user.getEmail(),
                 user.getPassword(), authorities);
     }
 
@@ -66,11 +69,28 @@ public class PrincipalUser implements UserDetails {
         return true;
     }
 
+    public Long getId(){
+        return id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getDni() {
+        return dni;
     }
+
+    @Override
+    public String toString() {
+        return "PrincipalUser{" +
+                "id='" + id + '\'' +
+                "name='" + name + '\'' +
+                ", dni='" + dni + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities +
+                '}';
+    }
+
 }

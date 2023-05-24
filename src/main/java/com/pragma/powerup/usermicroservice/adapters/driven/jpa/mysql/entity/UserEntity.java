@@ -27,4 +27,19 @@ public class UserEntity {
     @ManyToOne
     @JoinColumn(name = "id_role")
     private RoleEntity roleEntity;
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", dni='" + dni + '\'' +
+                ", phone='" + phone + '\'' +
+                ", birthDate='" + birthDate + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roleEntity=" + roleEntity +
+                '}';
+    }
 }

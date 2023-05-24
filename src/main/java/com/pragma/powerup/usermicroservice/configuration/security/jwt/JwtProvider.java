@@ -11,6 +11,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.apachecommons.CommonsLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@CommonsLog
 public class JwtProvider {
     private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
@@ -35,10 +37,12 @@ public class JwtProvider {
 
     public String generateToken(Authentication authentication) {
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
+        log.info("principalUser: " + principalUser.toString());
         List<String> roles = principalUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return Jwts.builder()
                 .setSubject(principalUser.getUsername())
                 .claim("roles", roles)
+                .claim("id", principalUser.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration * 180))
                 .signWith(SignatureAlgorithm.HS256, secret.getBytes())
@@ -75,11 +79,12 @@ public class JwtProvider {
             JWTClaimsSet claims = jwt.getJWTClaimsSet();
             String userName = claims.getSubject();
             List<String> roles = claims.getStringListClaim("roles");
-            //List<String> roles = (List<String>) claims.getClaim("roles");
+            String id = claims.getStringClaim("id");
 
             return Jwts.builder()
                     .setSubject(userName)
                     .claim("roles", roles)
+                    .claim("id", id)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(new Date().getTime() + expiration))
                     .signWith(SignatureAlgorithm.HS256, secret.getBytes())

@@ -1,6 +1,6 @@
 package com.pragma.powerup.usermicroservice.domain.utils;
 
-import com.pragma.powerup.usermicroservice.configuration.Constants;
+
 import com.pragma.powerup.usermicroservice.domain.exceptions.FieldValidationException;
 import com.pragma.powerup.usermicroservice.domain.model.User;
 
@@ -22,6 +22,21 @@ public class UserFieldValidation {
         }
         if (!ageIsValid(user.getBirthDate())) {
             fieldValidation.put(FIELD_BIRTHDATE, FIELD_VALIDATION);
+        }
+        if (fieldValidation.size()>0) {
+            throw new FieldValidationException(fieldValidation);
+        }
+
+    }
+
+    public static void employeeValidate(User user){
+        Map<String, String> fieldValidation = new HashMap<>();
+
+        if (!phoneIsValid(user.getPhone())) {
+            fieldValidation.put(FIELD_PHONE, FIELD_VALIDATION);
+        }
+        if (!dniIsValid(user.getDni())) {
+            fieldValidation.put(FIELD_DNI, FIELD_VALIDATION);
         }
         if (fieldValidation.size()>0) {
             throw new FieldValidationException(fieldValidation);

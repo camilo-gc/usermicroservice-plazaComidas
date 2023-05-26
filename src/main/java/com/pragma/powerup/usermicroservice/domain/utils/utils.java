@@ -1,12 +1,11 @@
 package com.pragma.powerup.usermicroservice.domain.utils;
 
-import com.pragma.powerup.usermicroservice.domain.exceptions.FieldValidationException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.pragma.powerup.usermicroservice.configuration.Constants.FIELD_PHONE;
+
 
 public class utils {
 

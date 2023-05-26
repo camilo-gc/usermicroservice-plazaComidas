@@ -5,6 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.entity.PrincipalUser;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.JwtResponseDto;
+import com.pragma.powerup.usermicroservice.domain.spi.IJwtProviderConfigurationPort;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Component
 @CommonsLog
-public class JwtProvider {
+public class JwtProvider implements IJwtProviderConfigurationPort {
     private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${jwt.secret}")
@@ -51,6 +52,10 @@ public class JwtProvider {
 
     public String getUserNameFromToken(String token) {
         return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getIdFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody().get("id").toString();
     }
 
     public boolean validateToken(String token) {

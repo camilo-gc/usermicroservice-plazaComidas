@@ -6,6 +6,8 @@ import com.pragma.powerup.usermicroservice.domain.api.IUserServicePort;
 import com.pragma.powerup.usermicroservice.domain.exceptions.FieldValidationException;
 import com.pragma.powerup.usermicroservice.domain.model.Role;
 import com.pragma.powerup.usermicroservice.domain.model.User;
+import com.pragma.powerup.usermicroservice.domain.spi.IJwtProviderConfigurationPort;
+import com.pragma.powerup.usermicroservice.domain.spi.IPlazaApiFeignPort;
 import com.pragma.powerup.usermicroservice.domain.spi.IUserPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +22,16 @@ class UserUseCaseTest {
 
     private IUserPersistencePort userPersistencePort;
     private IUserServicePort userServicePort;
+    private IJwtProviderConfigurationPort jwtProviderConfigurationPort;
+    private IPlazaApiFeignPort plazaApiFeignPort;
 
 
     @BeforeEach
     void setUp() {
-        userPersistencePort = mock(IUserPersistencePort.class);
-        userServicePort = new UserUseCase(userPersistencePort);
+        this.userPersistencePort = mock(IUserPersistencePort.class);
+        this.plazaApiFeignPort = mock(IPlazaApiFeignPort.class);
+        this.jwtProviderConfigurationPort = mock(IJwtProviderConfigurationPort.class);
+        this.userServicePort = new UserUseCase(userPersistencePort, plazaApiFeignPort, jwtProviderConfigurationPort);
     }
 
 
@@ -43,7 +49,7 @@ class UserUseCaseTest {
                 "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
                 new Role(2L, null, null));
 
-        assertThrows(FieldValidationException.class, () -> userServicePort.saveUser(user));
+        assertThrows(FieldValidationException.class, () -> userServicePort.saveOwner(user));
     }
 
 
@@ -63,7 +69,7 @@ class UserUseCaseTest {
 
         doThrow(UserAlreadyExistsException.class).when(userPersistencePort).saveUser(user);
 
-        assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveUser(user));
+        assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveOwner(user));
     }
 
 
@@ -94,7 +100,7 @@ class UserUseCaseTest {
 
 
         when(userPersistencePort.saveUser(userReq)).thenReturn(userRes);
-        assertNotNull(userServicePort.saveUser(userReq));
+        assertNotNull(userServicePort.saveOwner(userReq));
 
     }
 

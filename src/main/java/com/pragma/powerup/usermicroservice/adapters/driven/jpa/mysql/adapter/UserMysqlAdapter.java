@@ -1,10 +1,8 @@
 package com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.adapter;
 
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.entity.UserEntity;
-import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.RoleNotFoundException;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.UserAlreadyExistsException;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.UserNotFoundException;
-import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.repositories.IRoleRepository;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.repositories.IUserRepository;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.mappers.IUserEntityMapper;
 import com.pragma.powerup.usermicroservice.domain.model.User;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserMysqlAdapter implements IUserPersistencePort {
     private final IUserRepository userRepository;
-    private final IRoleRepository roleRepository;
     private final IUserEntityMapper userEntityMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,7 +26,6 @@ public class UserMysqlAdapter implements IUserPersistencePort {
             throw new UserAlreadyExistsException();
         }
 
-        roleRepository.findById(user.getRole().getId()).orElseThrow(RoleNotFoundException::new);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userEntityMapper.toUser(userRepository.save(userEntityMapper.toEntity(user)));

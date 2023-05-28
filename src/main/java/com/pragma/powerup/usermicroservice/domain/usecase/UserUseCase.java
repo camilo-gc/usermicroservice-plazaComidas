@@ -50,7 +50,7 @@ public class UserUseCase implements IUserServicePort {
 
         user.setRole( new Role( Constants.EMPLOYEE_ROLE_ID, null, null ) );
         User employee = userPersistencePort.saveUser(user);
-        plazaApiFeignPort.saveEmployeeByRestaurant( employee.getId(), restaurant.getId(), token);//TODO falta test
+        plazaApiFeignPort.saveEmployeeByRestaurant( employee.getId(), restaurant.getId(), token);
 
         return employee;
 

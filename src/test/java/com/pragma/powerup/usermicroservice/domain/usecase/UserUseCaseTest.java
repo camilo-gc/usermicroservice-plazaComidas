@@ -55,7 +55,6 @@ class UserUseCaseTest {
         assertThrows(FieldValidationException.class, () -> userServicePort.saveOwner(user));
     }
 
-
     @Test
     void saveOwnerAlreadyExists() {
 
@@ -71,10 +70,8 @@ class UserUseCaseTest {
                 new Role(2L, null, null));
 
         doThrow(UserAlreadyExistsException.class).when(userPersistencePort).saveUser(user);
-
         assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveOwner(user));
     }
-
 
     @Test
     void saveOwnerSuccessful() {
@@ -116,7 +113,6 @@ class UserUseCaseTest {
 
     }
 
-
     @Test
     void getUserByIdSuccessful() {
 
@@ -134,6 +130,7 @@ class UserUseCaseTest {
         when(userPersistencePort.getUserById(anyLong())).thenReturn(userRes);
         assertNotNull(userPersistencePort.getUserById(anyLong()));
     }
+
 
     @Test
     void saveEmployeeRestaurantNotFoundException(){
@@ -170,7 +167,7 @@ class UserUseCaseTest {
     void saveEmployeeAlreadyExists() {
 
         String token = "Bearer $2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6";
-        User employee = new User( null, "Pepito", "Perez", "111",
+        User employee = new User( 1L, "Pepito", "Perez", "111",
                 "+555555555555", "01-01-0101", "pepitoperez@gmail.com",
                 "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
                 new Role(2L, null, null));
@@ -182,7 +179,52 @@ class UserUseCaseTest {
 
         doThrow(UserAlreadyExistsException.class).when(userPersistencePort).saveUser(employee);
         assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveEmployee(employee, token, "2"));
-        //TODO verify(plazaApiFeignPort.saveEmployeeByRestaurant(2L, 2L, token), times(1));
+    }
+
+    @Test
+    void saveEmployeeSuccessful() {
+
+        String token = "Bearer $2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6";
+        User employee = new User( 1L, "Pepito", "Perez", "111",
+                "+555555555555", "01-01-0101", "pepitoperez@gmail.com",
+                "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
+                new Role(2L, null, null));
+        RestaurantResponseDto restaurant = new RestaurantResponseDto( 1L, "pepe food", "string",
+                "2", "+793247501667", "http://pepefood.com/recursos/logo.jpg", "111" );
+
+        when(plazaApiFeignPort.findRestaurantById(2L, token)).thenReturn(restaurant);
+        when(jwtProviderConfigurationPort.getIdFromToken(token.substring(7))).thenReturn("2");
+        when(userPersistencePort.saveUser(employee)).thenReturn(employee);
+
+        plazaApiFeignPort.saveEmployeeByRestaurant(employee.getId(), restaurant.getId(), token);
+
+        verify(plazaApiFeignPort).saveEmployeeByRestaurant(employee.getId(), restaurant.getId(), token);
+        assertNotNull(userServicePort.saveEmployee(employee, token, "2"));
+
+    }
+
+
+    @Test
+    void saveClientAlreadyExists() {
+
+        User user = new User( null, "Pepito", "Perez", "111", "+555555555555",
+                null, "pepitoperez@gmail.com", "1111",
+                new Role(2L, null, null));
+
+        doThrow(UserAlreadyExistsException.class).when(userPersistencePort).saveUser(user);
+        assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveClient(user));
+    }
+
+    @Test
+    void saveClientSuccessful() {
+
+        User user = new User( null, "Pepito", "Perez", "111", "+555555555555",
+                "01-01-0101", "pepitoperez@gmail.com", "1111",
+                new Role(2L, null, null));
+
+        when(userPersistencePort.saveUser(user)).thenReturn(user);
+        assertNotNull(userServicePort.saveClient(user));
+
     }
 
 }

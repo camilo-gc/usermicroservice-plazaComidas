@@ -28,6 +28,8 @@ public class UserUseCase implements IUserServicePort {
     public User saveOwner(User user) {
 
         UserFieldValidation.ownerValidate(user);
+
+        user.setRole( new Role( Constants.OWNER_ROLE_ID, null, null ) );
         return userPersistencePort.saveUser(user);
 
     }
@@ -38,22 +40,25 @@ public class UserUseCase implements IUserServicePort {
 
     public User saveEmployee(User user, String token, String idRestaurant ) {
 
-        UserFieldValidation.employeeValidate(user);
-        user.setRole( new Role( Constants.EMPLOYEE_ROLE_ID, null, null ) );
-
         RestaurantResponseDto restaurant = plazaApiFeignPort.findRestaurantById( Long.valueOf(idRestaurant), token );
         String idOwner = restaurant.getId_owner();
         String idUser = jwtProviderConfigurationPort.getIdFromToken(token.substring(7));
 
-        if ( !idUser.equals( idOwner ) ) {
+        if (!idUser.equals( idOwner ) ) {
             throw new OwnerNotAuthorizedException();
         }
 
+        user.setRole( new Role( Constants.EMPLOYEE_ROLE_ID, null, null ) );
         User employee = userPersistencePort.saveUser(user);
-        plazaApiFeignPort.saveEmployeeByRestaurant( employee.getId(), restaurant.getId(), token);
+        plazaApiFeignPort.saveEmployeeByRestaurant( employee.getId(), restaurant.getId(), token);//TODO falta test
 
         return employee;
 
+    }
+
+    public User saveClient(User user) {
+        user.setRole( new Role( Constants.CLIENT_ROLE_ID, null, null ) );
+        return userPersistencePort.saveUser(user);
     }
 
 

@@ -17,7 +17,7 @@ public class UserFieldValidation {
         if (!phoneIsValid(user.getPhone())) {
             fieldValidation.put(FIELD_PHONE, FIELD_VALIDATION);
         }
-        if (!dniIsValid(user.getDni())) {
+        if (!isDniValid(user.getDni())) {
             fieldValidation.put(FIELD_DNI, FIELD_VALIDATION);
         }
         if (!ageIsValid(user.getBirthDate())) {
@@ -29,20 +29,6 @@ public class UserFieldValidation {
 
     }
 
-    public static void employeeValidate(User user){
-        Map<String, String> fieldValidation = new HashMap<>();
-
-        if (!phoneIsValid(user.getPhone())) {
-            fieldValidation.put(FIELD_PHONE, FIELD_VALIDATION);
-        }
-        if (!dniIsValid(user.getDni())) {
-            fieldValidation.put(FIELD_DNI, FIELD_VALIDATION);
-        }
-        if (fieldValidation.size()>0) {
-            throw new FieldValidationException(fieldValidation);
-        }
-
-    }
 
     public static boolean phoneIsValid(String phone){
 
@@ -64,7 +50,7 @@ public class UserFieldValidation {
 
     }
 
-    public static boolean dniIsValid(String dni){
+    public static boolean isDniValid(String dni){
 
         return utils.isNumber(dni);
 

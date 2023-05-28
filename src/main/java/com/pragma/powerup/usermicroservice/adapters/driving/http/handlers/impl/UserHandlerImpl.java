@@ -2,13 +2,12 @@ package com.pragma.powerup.usermicroservice.adapters.driving.http.handlers.impl;
 
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.EmployeeRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.OwnerRequestDto;
+import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.UserRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.UserResponseDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.handlers.IUserHandler;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.mapper.IUserRequestMapper;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.mapper.IUserResponseMapper;
-import com.pragma.powerup.usermicroservice.configuration.Constants;
 import com.pragma.powerup.usermicroservice.domain.api.IUserServicePort;
-import com.pragma.powerup.usermicroservice.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +23,7 @@ public class UserHandlerImpl implements IUserHandler {
 
     @Override
     public void saveOwner(OwnerRequestDto userRequestDto) {
-        User user = userRequestMapper.toOwner( userRequestDto );
-        user.getRole().setId( Constants.OWNER_ROLE_ID );
-        userServicePort.saveOwner( user );
+        userServicePort.saveOwner( userRequestMapper.toOwner(userRequestDto) );
     }
 
     @Override
@@ -41,6 +38,11 @@ public class UserHandlerImpl implements IUserHandler {
                 token,
                 userRequestDto.getId_restaurant()
         );
+    }
+
+    @Override
+    public void saveClient( UserRequestDto userRequestDto) {
+        userServicePort.saveClient( userRequestMapper.toClient( userRequestDto ) );
     }
 
 }

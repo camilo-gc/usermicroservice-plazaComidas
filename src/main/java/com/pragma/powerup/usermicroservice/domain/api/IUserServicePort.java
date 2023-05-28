@@ -6,7 +6,9 @@ public interface IUserServicePort {
 
     User saveOwner(User user);
 
+    User getUserById(Long id);
+
     User saveEmployee( User user, String token, String idRestaurant );
 
-    User getUserById(Long id);
+    User saveClient( User user );
 }

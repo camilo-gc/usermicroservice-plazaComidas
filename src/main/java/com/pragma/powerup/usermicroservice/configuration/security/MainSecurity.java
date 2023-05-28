@@ -1,9 +1,7 @@
 package com.pragma.powerup.usermicroservice.configuration.security;
 
-import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.adapter.UserDetailsServiceImpl;
 import com.pragma.powerup.usermicroservice.configuration.security.jwt.JwtEntryPoint;
 import com.pragma.powerup.usermicroservice.configuration.security.jwt.JwtTokenFilter;
-import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@CommonsLog
 public class MainSecurity {
-
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
@@ -48,7 +42,8 @@ public class MainSecurity {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests(requests -> requests
-                        .requestMatchers("/auth/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/login", "/swagger-ui.html", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/user/new/client").permitAll()
                         .requestMatchers("/user/{id}").hasAnyRole("ADMIN", "OWNER")
                         .requestMatchers("/user/new/owner").hasRole("ADMIN")
                         .requestMatchers("/user/new/employee").hasRole("OWNER")

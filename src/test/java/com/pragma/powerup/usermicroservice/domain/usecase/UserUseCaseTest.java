@@ -1,9 +1,12 @@
 package com.pragma.powerup.usermicroservice.domain.usecase;
 
+import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.RestaurantNotFoundException;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.UserAlreadyExistsException;
 import com.pragma.powerup.usermicroservice.adapters.driven.jpa.mysql.exceptions.UserNotFoundException;
+import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.RestaurantResponseDto;
 import com.pragma.powerup.usermicroservice.domain.api.IUserServicePort;
 import com.pragma.powerup.usermicroservice.domain.exceptions.FieldValidationException;
+import com.pragma.powerup.usermicroservice.domain.exceptions.OwnerNotAuthorizedException;
 import com.pragma.powerup.usermicroservice.domain.model.Role;
 import com.pragma.powerup.usermicroservice.domain.model.User;
 import com.pragma.powerup.usermicroservice.domain.spi.IJwtProviderConfigurationPort;
@@ -36,7 +39,7 @@ class UserUseCaseTest {
 
 
     @Test
-    void saveUserFieldValidation() {
+    void saveOwnerFieldValidation() {
 
         User user = new User(
                 null,
@@ -54,7 +57,7 @@ class UserUseCaseTest {
 
 
     @Test
-    void saveUserAlreadyExists() {
+    void saveOwnerAlreadyExists() {
 
         User user = new User(
                 null,
@@ -74,7 +77,7 @@ class UserUseCaseTest {
 
 
     @Test
-    void saveUserSuccessful() {
+    void saveOwnerSuccessful() {
 
         User userReq = new User(
                 null,
@@ -131,4 +134,55 @@ class UserUseCaseTest {
         when(userPersistencePort.getUserById(anyLong())).thenReturn(userRes);
         assertNotNull(userPersistencePort.getUserById(anyLong()));
     }
+
+    @Test
+    void saveEmployeeRestaurantNotFoundException(){
+
+        User user = new User( null, "Pepito", "Perez", "111",
+                "+555555555555", "01-01-0101", "pepitoperez@gmail.com",
+                "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
+                new Role(2L, null, null));
+
+        doThrow(RestaurantNotFoundException.class).when(plazaApiFeignPort).findRestaurantById(0L, "token");
+        assertThrows(RestaurantNotFoundException.class, ()-> userServicePort.saveEmployee(user, "token", "0"));
+
+    }
+
+    @Test
+    void saveEmployeeOwnerException(){
+
+        String token = "Bearer $2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6";
+        User employee = new User( null, "Pepito", "Perez", "111",
+                "+555555555555", "01-01-0101", "pepitoperez@gmail.com",
+                "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
+                new Role(2L, null, null));
+        RestaurantResponseDto restaurant = new RestaurantResponseDto( 1L, "pepe food", "string", "2",
+                "+793247501667", "http://pepefood.com/recursos/logo.jpg", "111" );
+
+        when(plazaApiFeignPort.findRestaurantById(1L, token)).thenReturn(restaurant);
+        when(jwtProviderConfigurationPort.getIdFromToken(token.substring(7))).thenReturn("6");
+
+        assertThrows(OwnerNotAuthorizedException.class, ()-> userServicePort.saveEmployee(employee, token,  "1"));
+
+    }
+
+    @Test
+    void saveEmployeeAlreadyExists() {
+
+        String token = "Bearer $2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6";
+        User employee = new User( null, "Pepito", "Perez", "111",
+                "+555555555555", "01-01-0101", "pepitoperez@gmail.com",
+                "$2a$10$2edn/0De4Lk2IovglOz8fuC8z3b7FsctfiotMd9LMRitQnUgyPOW6",
+                new Role(2L, null, null));
+        RestaurantResponseDto restaurant = new RestaurantResponseDto( 1L, "pepe food", "string",
+                "2", "+793247501667", "http://pepefood.com/recursos/logo.jpg", "111" );
+
+        when(plazaApiFeignPort.findRestaurantById(2L, token)).thenReturn(restaurant);
+        when(jwtProviderConfigurationPort.getIdFromToken(token.substring(7))).thenReturn("2");
+
+        doThrow(UserAlreadyExistsException.class).when(userPersistencePort).saveUser(employee);
+        assertThrows(UserAlreadyExistsException.class, () -> userServicePort.saveEmployee(employee, token, "2"));
+        //TODO verify(plazaApiFeignPort.saveEmployeeByRestaurant(2L, 2L, token), times(1));
+    }
+
 }

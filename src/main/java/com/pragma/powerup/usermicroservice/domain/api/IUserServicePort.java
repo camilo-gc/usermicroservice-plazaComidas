@@ -8,7 +8,7 @@ public interface IUserServicePort {
 
     User getUserById(Long id);
 
-    User saveEmployee( User user, String token, String idRestaurant );
+    User saveEmployee( User user );
 
     User saveClient( User user );
 }

@@ -1,6 +1,5 @@
 package com.pragma.powerup.usermicroservice.adapters.driving.http.handlers;
 
-import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.EmployeeRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.OwnerRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.UserRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.response.UserResponseDto;
@@ -12,7 +11,7 @@ public interface IUserHandler {
 
     UserResponseDto getUserById(Long id);
 
-    void saveEmployee(EmployeeRequestDto userRequestDto, String token);
+    UserResponseDto saveEmployee(UserRequestDto userRequestDto);
 
     void saveClient(UserRequestDto userRequestDto);
 }

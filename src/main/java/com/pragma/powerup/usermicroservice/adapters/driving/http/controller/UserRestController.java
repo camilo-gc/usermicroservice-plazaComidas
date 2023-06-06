@@ -31,9 +31,13 @@ public class UserRestController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Owner created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
-                    @ApiResponse(responseCode = "409", description = "Owner already exists",
+                    @ApiResponse(responseCode = "401", description = "Unauthorized user",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
                     @ApiResponse(responseCode = "403", description = "Role not allowed for user creation",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
+                    @ApiResponse(responseCode = "409", description = "Owner already exists",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
+                    @ApiResponse(responseCode = "409", description = "invalid data",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping("/new/owner")
     @SecurityRequirement(name = "jwt")
@@ -61,16 +65,16 @@ public class UserRestController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Employee created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
-                    @ApiResponse(responseCode = "409", description = "Employee already exists",
+                    @ApiResponse(responseCode = "401", description = "Role not allowed for user",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
                     @ApiResponse(responseCode = "403", description = "Role not allowed for user creation",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error"))),
+                    @ApiResponse(responseCode = "409", description = "Employee already exists",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping("/new/employee")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<Map<String, String>> saveEmployee(@Valid @RequestBody UserRequestDto userRequestDto) {
-        userHandler.saveEmployee(userRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.USER_CREATED_MESSAGE));
+    public ResponseEntity<UserResponseDto> saveEmployee(@Valid @RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.ok( userHandler.saveEmployee(userRequestDto) );
     }
 
     @Operation(summary = "Add a new client",
